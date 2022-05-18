@@ -1,10 +1,10 @@
-package com.example.github.repositories
+package com.example.github.repositories.presentation.user
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.github.repositories.data.RepositoryDTO
-import com.example.github.repositories.data.UserDTO
+import com.example.github.repositories.data.remotemodel.RepositoryDTO
+import com.example.github.repositories.data.remotemodel.UserDTO
 import com.example.github.repositories.repository.GitHubRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

@@ -1,6 +1,9 @@
 package com.example.github.repositories.repository
 
-import com.example.github.repositories.data.*
+import com.example.github.repositories.data.api.GitHubEndpoints
+import com.example.github.repositories.data.remotemodel.RepositoryDTO
+import com.example.github.repositories.data.remotemodel.Response
+import com.example.github.repositories.data.remotemodel.UserDTO
 import retrofit2.Retrofit
 import javax.inject.Inject
 

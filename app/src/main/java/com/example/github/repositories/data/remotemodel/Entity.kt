@@ -1,4 +1,4 @@
-package com.example.github.repositories.data
+package com.example.github.repositories.data.remotemodel
 
 data class Response(
     val total_count: String,

@@ -9,7 +9,9 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.github.repositories.data.LocalDataStore
-import com.example.github.repositories.data.RepositoryDTO
+import com.example.github.repositories.data.remotemodel.RepositoryDTO
+import com.example.github.repositories.presentation.detail.DetailFragment
+import java.util.*
 
 class RepositoryAdapter(
     val list: List<RepositoryDTO>,
@@ -37,7 +39,8 @@ class RepositoryAdapter(
         @SuppressLint("SetTextI18n")
         fun bindData() {
             val item = list[adapterPosition]
-            titleTxt.text = "#" + (position + 1) + ": " + item.full_name!!.toUpperCase()
+            titleTxt.text =
+                "#" + (position + 1) + ": " + item.full_name!!.uppercase(Locale.getDefault())
             descriptionTxt.text = if (item.description!!.length > 150) item.description!!.take(150)
                 .plus("...") else item.description
             authorTxt.text = item.owner!!.login

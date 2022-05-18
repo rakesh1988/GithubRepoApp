@@ -1,5 +1,8 @@
-package com.example.github.repositories.data
+package com.example.github.repositories.data.api
 
+import com.example.github.repositories.data.remotemodel.RepositoryDTO
+import com.example.github.repositories.data.remotemodel.Response
+import com.example.github.repositories.data.remotemodel.UserDTO
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
