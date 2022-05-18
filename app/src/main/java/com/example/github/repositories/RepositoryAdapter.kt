@@ -40,10 +40,11 @@ class RepositoryAdapter(
         fun bindData() {
             val item = list[adapterPosition]
             titleTxt.text =
-                "#" + (position + 1) + ": " + item.full_name!!.uppercase(Locale.getDefault())
-            descriptionTxt.text = if (item.description!!.length > 150) item.description!!.take(150)
-                .plus("...") else item.description
-            authorTxt.text = item.owner!!.login
+                "#" + (adapterPosition + 1) + ": " + item.full_name?.uppercase(Locale.getDefault())
+            descriptionTxt.text =
+                if (item.description.orEmpty().length > 150) item.description?.take(150)
+                    .plus("...") else item.description
+            authorTxt.text = item.owner?.login
             imageVw.setImageResource(
                 if (LocalDataStore.instance.getBookmarks().contains(item))
                     R.drawable.baseline_bookmark_black_24
