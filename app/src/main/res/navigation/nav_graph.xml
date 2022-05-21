@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/main_fragment">
+
+    <fragment
+        android:id="@+id/main_fragment"
+        android:name="com.example.github.repositories.presentation.landing.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_detailFragment"
+            app:destination="@id/detail_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/detail_fragment"
+        android:name="com.example.github.repositories.presentation.detail.DetailFragment"
+        android:label="DetailFragment"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="repositoryItem"
+            app:argType="com.example.github.repositories.data.remotemodel.RepositoryDTO" />
+        <action
+            android:id="@+id/action_detail_fragment_to_user_fragment"
+            app:destination="@id/user_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/user_fragment"
+        android:name="com.example.github.repositories.presentation.user.UserFragment"
+        android:label="UserFragment"
+        tools:layout="@layout/fragment_user">
+        <argument
+            android:name="ownerItem"
+            app:argType="com.example.github.repositories.data.remotemodel.OwnerDTO" />
+        <action
+            android:id="@+id/action_user_fragment_to_detail_fragment"
+            app:destination="@id/detail_fragment"
+            app:enterAnim="@anim/push_up_in"
+            app:exitAnim="@anim/stationary"
+            app:popExitAnim="@anim/push_down_out" />
+
+    </fragment>
+</navigation>

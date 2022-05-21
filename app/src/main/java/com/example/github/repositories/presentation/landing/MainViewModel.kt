@@ -9,6 +9,7 @@ import com.example.github.repositories.data.QUERY
 import com.example.github.repositories.data.SORT
 import com.example.github.repositories.data.remotemodel.RepositoryDTO
 import com.example.github.repositories.repository.GitHubRepo
+import com.example.github.repositories.shared.getLogTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val gitHubRepo: GitHubRepo
 ) : ViewModel() {
-    private val TAG = "MainViewModel"
+    private val TAG = getLogTag()
+
     val repositories = MutableLiveData<List<RepositoryDTO>>()
 
     fun fetchItems() {

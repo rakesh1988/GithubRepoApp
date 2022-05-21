@@ -1,4 +1,4 @@
-package com.example.github.repositories
+package com.example.github.repositories.presentation.landing
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.github.repositories.R
 import com.example.github.repositories.data.LocalDataStore
 import com.example.github.repositories.data.remotemodel.RepositoryDTO
-import com.example.github.repositories.presentation.detail.DetailFragment
+import com.example.github.repositories.presentation.shared.RecyclerViewItemClickListener
 import java.util.*
 
 class RepositoryAdapter(
     val list: List<RepositoryDTO>,
-    val activity: FragmentActivity
+    private val onClickListener: RecyclerViewItemClickListener
 ) : RecyclerView.Adapter<RepositoryAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = list.size
@@ -52,11 +52,8 @@ class RepositoryAdapter(
                     R.drawable.baseline_bookmark_border_black_24
             )
             container.setOnClickListener {
-                activity.supportFragmentManager
-                    .beginTransaction()
-                    .add(android.R.id.content, DetailFragment(item))
-                    .addToBackStack("detail")
-                    .commit()
+                onClickListener.onClick(item, adapterPosition)
+                // its not a good idea to pass activity into adapter
             }
         }
     }

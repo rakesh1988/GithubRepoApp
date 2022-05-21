@@ -6,18 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.github.repositories.R
 import com.example.github.repositories.data.LocalDataStore
-import com.example.github.repositories.data.remotemodel.RepositoryDTO
 import com.example.github.repositories.databinding.FragmentDetailBinding
-import com.example.github.repositories.presentation.user.UserFragment
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DetailFragment(private val repository: RepositoryDTO) : Fragment() {
+class DetailFragment : Fragment() {
 
     private var binding: FragmentDetailBinding? = null
+
+    private val args: DetailFragmentArgs by navArgs()
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -26,32 +28,31 @@ class DetailFragment(private val repository: RepositoryDTO) : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDetailBinding.inflate(inflater).apply {
-            title.text = repository.name
-            detail.text = "Created by " + repository.owner!!.login + ", at " + repository.created_at
-            Picasso.get().load(repository.owner!!.avatar_url).into(image)
-            description.text = repository.description
-            url.text = repository.html_url
+            title.text = args.repositoryItem.name
+            detail.text =
+                "Created by " + args.repositoryItem.owner!!.login + ", at " + args.repositoryItem.created_at
+            Picasso.get().load(args.repositoryItem.owner!!.avatar_url).into(image)
+            description.text = args.repositoryItem.description
+            url.text = args.repositoryItem.html_url
             image.setImageResource(
-                if (LocalDataStore.instance.getBookmarks().contains(repository))
+                if (LocalDataStore.instance.getBookmarks().contains(args.repositoryItem))
                     R.drawable.baseline_bookmark_black_24
                 else
                     R.drawable.baseline_bookmark_border_black_24
             )
             image.setOnClickListener {
-                val isBookmarked = LocalDataStore.instance.getBookmarks().contains(repository)
-                LocalDataStore.instance.bookmarkRepo(repository, !isBookmarked)
+                val isBookmarked =
+                    LocalDataStore.instance.getBookmarks().contains(args.repositoryItem)
+                LocalDataStore.instance.bookmarkRepo(args.repositoryItem, !isBookmarked)
                 image.setImageResource(if (!isBookmarked) R.drawable.baseline_bookmark_black_24 else R.drawable.baseline_bookmark_border_black_24)
             }
             detail.setOnClickListener {
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .add(android.R.id.content, UserFragment(repository.owner!!))
-                    .addToBackStack("user")
-                    .commit()
+                args.repositoryItem.owner?.let {
+                    val action = DetailFragmentDirections.actionDetailFragmentToUserFragment(it)
+                    findNavController().navigate(action)
+                }
             }
         }
-
-
         return binding!!.root
     }
 }
