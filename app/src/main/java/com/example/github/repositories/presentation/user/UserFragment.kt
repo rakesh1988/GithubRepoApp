@@ -41,12 +41,14 @@ class UserFragment : Fragment() {
         }
 
         viewModel.fetchUser(args.ownerItem.login)
-        viewModel.user.observe(viewLifecycleOwner) {
-            binding!!.detail.text = "Twitter handle: " + it.twitter_username
-            viewModel.fetchRepositories(it.repos_url!!)
+        viewModel.user.observe(viewLifecycleOwner) { userDto ->
+            userDto?.let {
+                binding!!.detail.text = "Twitter handle:  ${it.twitter_username ?: "NA"}"
+                viewModel.fetchRepositories(it.repos_url!!)
+            }
         }
         viewModel.repositories.observe(viewLifecycleOwner) {
-            binding!!.list.adapter = RepositoryAdapter(
+            binding!!.repoList.adapter = RepositoryAdapter(
                 it.toMutableList(),
                 RecyclerViewItemClickListener { item, position ->
                     Log.d(TAG, "clicked on item number $position")
@@ -56,7 +58,21 @@ class UserFragment : Fragment() {
                         .navigate(action)
                 }
             )
+            stopLoading()
         }
         return binding!!.root
     }
+
+    private fun startLoading() {
+        binding?.shimmerFrameLayout?.visibility = View.VISIBLE
+        binding?.repoList?.visibility = View.GONE
+        binding?.shimmerFrameLayout?.startShimmer()
+    }
+
+    private fun stopLoading() {
+        binding?.shimmerFrameLayout?.visibility = View.GONE
+        binding?.repoList?.visibility = View.VISIBLE
+        binding?.shimmerFrameLayout?.stopShimmer()
+    }
+
 }

@@ -31,7 +31,10 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater).apply {
-            swipeRefresh.setOnRefreshListener { viewModel.refresh() }
+            swipeRefresh.setOnRefreshListener {
+                startLoading()
+                viewModel.refresh()
+            }
         }
         viewModel.fetchItems()
 
@@ -47,7 +50,20 @@ class MainFragment : Fragment() {
             )
             binding?.repoList?.adapter = adapter
             binding?.swipeRefresh?.isRefreshing = false // hide refresh icon
+            stopLoading()
         }
         return binding!!.root
+    }
+
+    private fun startLoading() {
+        binding?.shimmerFrameLayout?.visibility = View.VISIBLE
+        binding?.repoList?.visibility = View.GONE
+        binding?.shimmerFrameLayout?.startShimmer()
+    }
+
+    private fun stopLoading() {
+        binding?.shimmerFrameLayout?.visibility = View.GONE
+        binding?.repoList?.visibility = View.VISIBLE
+        binding?.shimmerFrameLayout?.stopShimmer()
     }
 }
