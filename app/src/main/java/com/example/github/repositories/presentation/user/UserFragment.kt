@@ -25,9 +25,15 @@ class UserFragment : Fragment() {
 
     private val viewModel: UserViewModel by viewModels()
 
-    private var binding: FragmentUserBinding? = null
+    private var _binding: FragmentUserBinding? = null
+    private val binding get() = _binding!!
 
     private val args: UserFragmentArgs by navArgs()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -35,7 +41,7 @@ class UserFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentUserBinding.inflate(inflater).apply {
+        _binding = FragmentUserBinding.inflate(inflater).apply {
             title.text = args.ownerItem.login
             Picasso.get().load(args.ownerItem.avatar_url?.toUri()).into(image)
         }
@@ -43,12 +49,12 @@ class UserFragment : Fragment() {
         viewModel.fetchUser(args.ownerItem.login)
         viewModel.user.observe(viewLifecycleOwner) { userDto ->
             userDto?.let {
-                binding!!.detail.text = "Twitter handle:  ${it.twitter_username ?: "NA"}"
+                binding.detail.text = "Twitter handle:  ${it.twitter_username ?: "NA"}"
                 viewModel.fetchRepositories(it.repos_url!!)
             }
         }
         viewModel.repositories.observe(viewLifecycleOwner) {
-            binding!!.repoList.adapter = RepositoryAdapter(
+            binding.repoList.adapter = RepositoryAdapter(
                 it.toMutableList(),
                 RecyclerViewItemClickListener { item, position ->
                     Log.d(TAG, "clicked on item number $position")
@@ -60,19 +66,19 @@ class UserFragment : Fragment() {
             )
             stopLoading()
         }
-        return binding!!.root
+        return binding.root
     }
 
     private fun startLoading() {
-        binding?.shimmerFrameLayout?.visibility = View.VISIBLE
-        binding?.repoList?.visibility = View.GONE
-        binding?.shimmerFrameLayout?.startShimmer()
+        binding.shimmerFrameLayout.visibility = View.VISIBLE
+        binding.repoList.visibility = View.GONE
+        binding.shimmerFrameLayout.startShimmer()
     }
 
     private fun stopLoading() {
-        binding?.shimmerFrameLayout?.visibility = View.GONE
-        binding?.repoList?.visibility = View.VISIBLE
-        binding?.shimmerFrameLayout?.stopShimmer()
+        binding.shimmerFrameLayout.visibility = View.GONE
+        binding.repoList.visibility = View.VISIBLE
+        binding.shimmerFrameLayout.stopShimmer()
     }
 
 }

@@ -21,8 +21,11 @@ class MainFragment : Fragment() {
     private val TAG = getLogTag()
 
     private val viewModel: MainViewModel by viewModels()
+    private var _binding: FragmentMainBinding? = null
 
-    private var binding: FragmentMainBinding? = null
+    // This property is only valid between onCreateView and
+// onDestroyView.
+    private val binding get() = _binding!!
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -30,7 +33,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater).apply {
+        _binding = FragmentMainBinding.inflate(inflater).apply {
             swipeRefresh.setOnRefreshListener {
                 startLoading()
                 viewModel.refresh()
@@ -48,22 +51,27 @@ class MainFragment : Fragment() {
                         .navigate(action)
                 }
             )
-            binding?.repoList?.adapter = adapter
-            binding?.swipeRefresh?.isRefreshing = false // hide refresh icon
+            binding.repoList.adapter = adapter
+            binding.swipeRefresh.isRefreshing = false // hide refresh icon
             stopLoading()
         }
-        return binding!!.root
+        return binding.root
     }
 
     private fun startLoading() {
-        binding?.shimmerFrameLayout?.visibility = View.VISIBLE
-        binding?.repoList?.visibility = View.GONE
-        binding?.shimmerFrameLayout?.startShimmer()
+        binding.shimmerFrameLayout.visibility = View.VISIBLE
+        binding.repoList.visibility = View.GONE
+        binding.shimmerFrameLayout.startShimmer()
     }
 
     private fun stopLoading() {
-        binding?.shimmerFrameLayout?.visibility = View.GONE
-        binding?.repoList?.visibility = View.VISIBLE
-        binding?.shimmerFrameLayout?.stopShimmer()
+        binding.shimmerFrameLayout.visibility = View.GONE
+        binding.repoList.visibility = View.VISIBLE
+        binding.shimmerFrameLayout.stopShimmer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

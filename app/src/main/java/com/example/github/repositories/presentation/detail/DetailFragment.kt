@@ -17,7 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
-    private var binding: FragmentDetailBinding? = null
+    private var _binding: FragmentDetailBinding? = null
+    private val binding get() = _binding!!
 
     private val args: DetailFragmentArgs by navArgs()
 
@@ -27,7 +28,7 @@ class DetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDetailBinding.inflate(inflater).apply {
+        _binding = FragmentDetailBinding.inflate(inflater).apply {
             title.text = args.repositoryItem.name
             detail.text =
                 "Created by " + args.repositoryItem.owner!!.login + ", at " + args.repositoryItem.created_at
@@ -53,6 +54,12 @@ class DetailFragment : Fragment() {
                 }
             }
         }
-        return binding!!.root
+        return binding.root
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
