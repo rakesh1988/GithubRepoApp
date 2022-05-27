@@ -1,5 +1,6 @@
 package com.example.github.repositories.presentation.user
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,10 +19,10 @@ class UserViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _user = MutableLiveData<UserDTO>()
-    val user = _user
+    val user: LiveData<UserDTO> = _user
 
     private val _repositories = MutableLiveData<List<RepositoryDTO>>()
-    val repositories = _repositories
+    val repositories: LiveData<List<RepositoryDTO>> = _repositories
 
     val errorFetchingData = SingleLiveEvent<Unit>()
     val viewModelInitComplete = SingleLiveEvent<Unit>()

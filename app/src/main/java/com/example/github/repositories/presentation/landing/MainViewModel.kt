@@ -1,6 +1,7 @@
 package com.example.github.repositories.presentation.landing
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +24,7 @@ class MainViewModel @Inject constructor(
     private val TAG = getLogTag()
 
     private val _repositories = MutableLiveData<List<RepositoryDTO>>()
-    val repositories = _repositories
+    val repositories: LiveData<List<RepositoryDTO>> = _repositories
 
     val errorFetchingData = SingleLiveEvent<Unit>()
 
