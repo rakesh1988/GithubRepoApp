@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.github.repositories.data.remotemodel.RepositoryDTO
 import com.example.github.repositories.data.remotemodel.UserDTO
 import com.example.github.repositories.repository.GitHubRepo
+import com.example.github.repositories.shared.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,18 +17,27 @@ class UserViewModel @Inject constructor(
     private val gitHubRepo: GitHubRepo
 ) : ViewModel() {
 
-    val user = MutableLiveData<UserDTO>()
-    val repositories = MutableLiveData<List<RepositoryDTO>>()
+    private val _user = MutableLiveData<UserDTO>()
+    val user = _user
+
+    private val _repositories = MutableLiveData<List<RepositoryDTO>>()
+    val repositories = _repositories
+
+    val errorFetchingData = SingleLiveEvent<Unit>()
+    val viewModelInitComplete = SingleLiveEvent<Unit>()
+
+    init {
+        viewModelInitComplete.call()
+    }
 
     fun fetchUser(username: String) {
-        // FIXME Use the proper scope
         viewModelScope.launch {
             delay(1_000) // This is to simulate network latency, please don't remove!
             try {
                 val response = gitHubRepo.getUser(username)
-                user.value = response
+                _user.value = response
             } catch (e: Throwable) {
-                // TODO: handle error
+                errorFetchingData.call()
             }
         }
     }
@@ -37,9 +47,9 @@ class UserViewModel @Inject constructor(
             delay(1_000) // This is to simulate network latency, please don't remove!
             try {
                 val response = gitHubRepo.getUserRepositories(reposUrl)
-                repositories.value = response
+                _repositories.value = response
             } catch (e: Throwable) {
-                // TODO: handle error
+                errorFetchingData.call()
             }
         }
     }

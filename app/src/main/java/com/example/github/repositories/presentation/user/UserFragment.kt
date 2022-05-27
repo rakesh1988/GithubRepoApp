@@ -45,25 +45,46 @@ class UserFragment : Fragment() {
             title.text = args.ownerItem.login
             Picasso.get().load(args.ownerItem.avatar_url?.toUri()).into(image)
         }
-
-        viewModel.fetchUser(args.ownerItem.login)
+        viewModel.viewModelInitComplete.observe(viewLifecycleOwner) {
+            viewModel.fetchUser(args.ownerItem.login)
+        }
         viewModel.user.observe(viewLifecycleOwner) { userDto ->
             userDto?.let {
                 binding.detail.text = "Twitter handle:  ${it.twitter_username ?: "NA"}"
                 viewModel.fetchRepositories(it.repos_url!!)
             }
         }
+
         viewModel.repositories.observe(viewLifecycleOwner) {
             binding.repoList.adapter = RepositoryAdapter(
                 it.toMutableList(),
-                RecyclerViewItemClickListener { item, position ->
-                    Log.d(TAG, "clicked on item number $position")
-                    val action =
-                        UserFragmentDirections.actionUserFragmentToDetailFragment(item as RepositoryDTO)
-                    findNavController()
-                        .navigate(action)
+                RepositoryAdapter.ItemType.VIEW_TYPE_DATA,
+                object : RecyclerViewItemClickListener {
+                    override fun onClick(item: Any, position: Int) {
+                        Log.d(TAG, "clicked on item number $position")
+                        val action =
+                            UserFragmentDirections.actionUserFragmentToDetailFragment(item as RepositoryDTO)
+                        findNavController()
+                            .navigate(action)
+                    }
                 }
             )
+            stopLoading()
+        }
+
+        viewModel.errorFetchingData.observe(viewLifecycleOwner) {
+            val adapter = RepositoryAdapter(
+                emptyList(),
+                RepositoryAdapter.ItemType.VIEW_TYPE_RETRY,
+                object : RecyclerViewItemClickListener {
+                    override fun onClick(item: Any, position: Int) {
+                        Log.d(TAG, "clicked on retry")
+                        startLoading()
+                        viewModel.fetchUser(args.ownerItem.login)
+                    }
+                }
+            )
+            binding.repoList.adapter = adapter
             stopLoading()
         }
         return binding.root

@@ -24,7 +24,7 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
 
     // This property is only valid between onCreateView and
-// onDestroyView.
+    // onDestroyView.
     private val binding get() = _binding!!
 
     @SuppressLint("SetTextI18n")
@@ -39,16 +39,35 @@ class MainFragment : Fragment() {
                 viewModel.refresh()
             }
         }
-        viewModel.fetchItems()
 
         viewModel.repositories.observe(viewLifecycleOwner) {
             val adapter = RepositoryAdapter(it.take(20).toMutableList(),
-                RecyclerViewItemClickListener { item, position ->
-                    Log.d(TAG, "clicked on item number $position")
-                    val action =
-                        MainFragmentDirections.actionMainFragmentToDetailFragment(item as RepositoryDTO)
-                    findNavController()
-                        .navigate(action)
+                RepositoryAdapter.ItemType.VIEW_TYPE_DATA,
+                object : RecyclerViewItemClickListener {
+                    override fun onClick(item: Any, position: Int) {
+                        Log.d(TAG, "clicked on item number $position")
+                        val action =
+                            MainFragmentDirections.actionMainFragmentToDetailFragment(item as RepositoryDTO)
+                        findNavController()
+                            .navigate(action)
+                    }
+                }
+            )
+            binding.repoList.adapter = adapter
+            binding.swipeRefresh.isRefreshing = false // hide refresh icon
+            stopLoading()
+        }
+
+        viewModel.errorFetchingData.observe(viewLifecycleOwner) {
+            val adapter = RepositoryAdapter(
+                emptyList(),
+                RepositoryAdapter.ItemType.VIEW_TYPE_RETRY,
+                object : RecyclerViewItemClickListener {
+                    override fun onClick(item: Any, position: Int) {
+                        Log.d(TAG, "clicked on retry")
+                        startLoading()
+                        viewModel.refresh()
+                    }
                 }
             )
             binding.repoList.adapter = adapter
@@ -56,6 +75,11 @@ class MainFragment : Fragment() {
             stopLoading()
         }
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.repoList.adapter?.notifyDataSetChanged()
     }
 
     private fun startLoading() {

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.github.repositories.R
-import com.example.github.repositories.data.LocalDataStore
+import com.example.github.repositories.data.BookmarkDataStore
 import com.example.github.repositories.databinding.FragmentDetailBinding
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,16 +36,22 @@ class DetailFragment : Fragment() {
             description.text = args.repositoryItem.description
             url.text = args.repositoryItem.html_url
             image.setImageResource(
-                if (LocalDataStore.instance.getBookmarks().contains(args.repositoryItem))
+                if (BookmarkDataStore.isRepoBookmarked(args.repositoryItem.id))
                     R.drawable.baseline_bookmark_black_24
                 else
                     R.drawable.baseline_bookmark_border_black_24
             )
             image.setOnClickListener {
                 val isBookmarked =
-                    LocalDataStore.instance.getBookmarks().contains(args.repositoryItem)
-                LocalDataStore.instance.bookmarkRepo(args.repositoryItem, !isBookmarked)
-                image.setImageResource(if (!isBookmarked) R.drawable.baseline_bookmark_black_24 else R.drawable.baseline_bookmark_border_black_24)
+                    BookmarkDataStore.isRepoBookmarked(args.repositoryItem.id)
+                BookmarkDataStore.bookmarkRepo(
+                    args.repositoryItem.id,
+                    !isBookmarked
+                ) // previous bookmarked must be now removed. or vice versa
+                image.setImageResource(
+                    if (!isBookmarked) R.drawable.baseline_bookmark_black_24
+                    else R.drawable.baseline_bookmark_border_black_24
+                )
             }
             detail.setOnClickListener {
                 args.repositoryItem.owner?.let {

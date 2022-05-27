@@ -42,7 +42,7 @@ data class LicenseDTO(
 
 @Parcelize
 data class RepositoryDTO(
-    var id: Int?,
+    var id: Int,
     var node_id: String?,
     var name: String?,
     var full_name: String?,
