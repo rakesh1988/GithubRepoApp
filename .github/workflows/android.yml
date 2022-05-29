@@ -2,9 +2,11 @@ name: Android CI
 
 on:
   push:
-    branches: [ rakesh1988@gmail.com ]
+    branches:
+      - "**"
   pull_request:
-    branches: [ rakesh1988@gmail.com ]
+    branches:
+      - "**"
 
 jobs:
   build:

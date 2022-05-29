@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.github.repositories.data.remotemodel.RepositoryDTO
 import com.example.github.repositories.data.remotemodel.UserDTO
-import com.example.github.repositories.repository.GitHubRepo
 import com.example.github.repositories.shared.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -15,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val gitHubRepo: GitHubRepo
+    private val getUserUseCase: GetUserUseCase,
+    private val getUserRepositoriesUseCase: GetUserRepositoriesUseCase,
 ) : ViewModel() {
 
     private val _user = MutableLiveData<UserDTO>()
@@ -35,7 +35,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             delay(1_000) // This is to simulate network latency, please don't remove!
             try {
-                val response = gitHubRepo.getUser(username)
+                val response = getUserUseCase.invoke(username)
                 _user.value = response
             } catch (e: Throwable) {
                 errorFetchingData.call()
@@ -47,7 +47,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             delay(1_000) // This is to simulate network latency, please don't remove!
             try {
-                val response = gitHubRepo.getUserRepositories(reposUrl)
+                val response = getUserRepositoriesUseCase.invoke(reposUrl)
                 _repositories.value = response
             } catch (e: Throwable) {
                 errorFetchingData.call()
